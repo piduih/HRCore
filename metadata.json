@@ -1,0 +1,5 @@
+{
+  "name": "HR Core - Sistem Pengurusan Sumber Manusia",
+  "description": "A comprehensive Human Resources management application for Malaysian businesses, covering employee data, leave, claims, and a payroll calculator. Includes an AI-powered HR policy assistant to answer queries on Malaysian labor laws.",
+  "requestFramePermissions": []
+}
