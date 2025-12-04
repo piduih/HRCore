@@ -4,13 +4,13 @@
   "description": "A comprehensive Human Resources management application for Malaysian businesses, covering employee data, leave, claims, and a payroll calculator. Includes an AI-powered HR policy assistant to answer queries on Malaysian labor laws.",
   "icons": [
     {
-      "src": "icons/icon-192x192.png",
+      "src": "https://placehold.co/192x192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "icons/icon-512x512.png",
+      "src": "https://placehold.co/512x512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
