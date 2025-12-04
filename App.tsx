@@ -56,6 +56,25 @@ const App: React.FC = () => {
   const [isQrScannerOpen, setQrScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
 
+  // Handle loader removal on mount
+  useEffect(() => {
+    const loader = document.getElementById('loader');
+    if (loader) {
+      // Small delay to ensure smooth transition
+      setTimeout(() => {
+        loader.classList.add('fade-out');
+        const removeLoader = () => {
+             if (loader && loader.parentNode) {
+                 loader.parentNode.removeChild(loader);
+             }
+        };
+        loader.addEventListener('transitionend', removeLoader);
+        // Fallback cleanup
+        setTimeout(removeLoader, 600);
+      }, 100);
+    }
+  }, []);
+
   useEffect(() => {
     const handleOffline = () => {
       setToast({ message: 'You are currently offline. Some features may be limited.', type: 'error' });
