@@ -1,10 +1,10 @@
 
-
 import React, { useState } from 'react';
 import { useAppState } from '../../hooks/useAppContext';
 import { Card } from '../common/Card';
 import { MyProfile } from './MyProfile';
 import { CompanyProfileSettings } from './CompanyProfileSettings';
+import { SystemSettings } from './SystemSettings';
 
 export const Settings: React.FC = () => {
     const { currentUser } = useAppState();
@@ -13,18 +13,19 @@ export const Settings: React.FC = () => {
     const tabs = [
         { id: 'my_profile', label: 'My Profile' },
         ...(currentUser.isManager ? [{ id: 'company_profile', label: 'Company Profile' }] : []),
+        { id: 'system', label: 'System' },
     ];
 
     return (
         <div className="space-y-6">
             <div>
                 <h2 className="text-2xl font-bold">Settings</h2>
-                <p className="text-neutral-500">Manage your personal and company information.</p>
+                <p className="text-neutral-500">Manage your personal, company, and system preferences.</p>
             </div>
 
             <Card>
                 <div className="border-b border-neutral-200">
-                    <nav className="-mb-px flex space-x-6 px-6">
+                    <nav className="-mb-px flex space-x-6 px-6 overflow-x-auto">
                         {tabs.map(tab => (
                             <button
                                 key={tab.id}
@@ -44,6 +45,7 @@ export const Settings: React.FC = () => {
                 <div className="p-6">
                     {activeTab === 'my_profile' && <MyProfile />}
                     {activeTab === 'company_profile' && currentUser.isManager && <CompanyProfileSettings />}
+                    {activeTab === 'system' && <SystemSettings />}
                 </div>
             </Card>
         </div>

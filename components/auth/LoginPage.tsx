@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
+import { ApiKeyModal } from '../settings/ApiKeyModal';
 
 interface LoginPageProps {
   onLogin: () => void;
@@ -12,6 +13,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isApiKeyModalOpen, setApiKeyModalOpen] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,6 +37,17 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       {/* Background Decoration - Extended height to ensure white text is visible */}
       <div className="absolute top-0 left-0 w-full h-96 bg-primary transform -skew-y-3 origin-top-left z-0"></div>
       
+      {/* API Key Button */}
+      <div className="absolute top-4 right-4 z-20">
+         <button 
+            onClick={() => setApiKeyModalOpen(true)}
+            className="flex items-center space-x-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors border border-white/30"
+         >
+            <Icon name="settings" className="w-4 h-4" />
+            <span>Tetapan API Key</span>
+         </button>
+      </div>
+
       <div className="w-full max-w-md z-10">
         <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white text-primary shadow-lg mb-4">
@@ -137,6 +150,8 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           &copy; {new Date().getFullYear()} HR Core System. All rights reserved.
         </p>
       </div>
+      
+      <ApiKeyModal isOpen={isApiKeyModalOpen} onClose={() => setApiKeyModalOpen(false)} />
     </div>
   );
 };
