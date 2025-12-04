@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
@@ -23,7 +22,12 @@ window.addEventListener('load', () => {
     loader.addEventListener('transitionend', () => loader.remove());
   }
   
-  // Register service worker
+  // Service Worker registration is disabled to prevent "origin mismatch" errors 
+  // in the AI Studio preview environment. 
+  // The preview environment often redirects missing static files or serves them 
+  // from a different origin, causing Service Worker registration to fail.
+  
+  /*
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/service-worker.js')
       .then(registration => {
@@ -33,4 +37,5 @@ window.addEventListener('load', () => {
         console.log('ServiceWorker registration failed: ', err);
       });
   }
+  */
 });
