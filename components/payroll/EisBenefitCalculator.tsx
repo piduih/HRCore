@@ -1,16 +1,8 @@
-
 import React, { useState, useMemo } from 'react';
 import { calculateEisBenefits } from '../../services/payrollService';
 import { Card } from '../common/Card';
-import { Button } from '../common/Button';
-import { Icon } from '../common/Icon';
 
-interface EisCalculatorProps {
-    setAiChatOpen: (isOpen: boolean) => void;
-    setAiInitialPrompt: (prompt: string) => void;
-}
-
-export const EisBenefitCalculator: React.FC<EisCalculatorProps> = ({ setAiChatOpen, setAiInitialPrompt }) => {
+export const EisBenefitCalculator: React.FC = () => {
     const [salary, setSalary] = useState('');
     
     const benefits = useMemo(() => {
@@ -18,11 +10,6 @@ export const EisBenefitCalculator: React.FC<EisCalculatorProps> = ({ setAiChatOp
         if (isNaN(monthlySalary) || monthlySalary <= 0) return [];
         return calculateEisBenefits(monthlySalary);
     }, [salary]);
-
-    const handleAskAi = () => {
-        setAiInitialPrompt("What are the general eligibility criteria to claim EIS benefits in Malaysia?");
-        setAiChatOpen(true);
-    };
 
     const formatCurrency = (value: number) => `RM ${value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -73,12 +60,6 @@ export const EisBenefitCalculator: React.FC<EisCalculatorProps> = ({ setAiChatOp
                                         ))}
                                     </tbody>
                                 </table>
-                            </div>
-                            <div className="text-center pt-4">
-                                <Button variant="secondary" onClick={handleAskAi}>
-                                    <Icon name="bot" className="w-5 h-5 mr-2" />
-                                    Ask AI about eligibility
-                                </Button>
                             </div>
                         </div>
                     ) : (

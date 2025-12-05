@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useMemo } from 'react';
 import { useAppState, useAppActions } from '../../hooks/useAppContext';
 import { Card } from '../common/Card';
@@ -9,7 +6,6 @@ import { Icon } from '../common/Icon';
 import { Modal } from '../common/Modal';
 import type { JobPosting, Candidate, CandidateStage } from '../../types';
 import { CandidateStage as CandidateStageEnum } from '../../types';
-import { generateContent } from '../../services/geminiService';
 
 // --- Sub-components defined within the main file for simplicity ---
 
@@ -27,7 +23,7 @@ const JobPostingCard: React.FC<{ job: JobPosting, candidateCount: number, onSele
     </Card>
 );
 
-const CandidateCard: React.FC<{ candidate: Candidate, onMove: (stage: CandidateStage) => void, onSummarize: () => void }> = ({ candidate, onMove, onSummarize }) => {
+const CandidateCard: React.FC<{ candidate: Candidate, onMove: (stage: CandidateStage) => void }> = ({ candidate, onMove }) => {
     // This is a simplified move logic. A real app would have more complex state transitions.
     const nextStage = () => {
         switch(candidate.stage) {
@@ -44,9 +40,6 @@ const CandidateCard: React.FC<{ candidate: Candidate, onMove: (stage: CandidateS
             <p className="font-semibold text-neutral-800">{candidate.name}</p>
             <p className="text-xs text-neutral-500 truncate">{candidate.email}</p>
             <div className="pt-2 border-t flex justify-end space-x-2">
-                <Button size="sm" variant="secondary" onClick={onSummarize} title="Summarize with AI" disabled={!candidate.resumeText}>
-                    <Icon name="bot" className="w-4 h-4"/>
-                </Button>
                  <Button size="sm" variant="secondary" onClick={() => onMove(CandidateStageEnum.REJECTED)}>Reject</Button>
                  {nextStage() && <Button size="sm" onClick={() => onMove(nextStage()!)}>Move</Button>}
             </div>
@@ -89,56 +82,12 @@ const AddCandidateForm: React.FC<{ jobId: string, onClose: () => void }> = ({ jo
     );
 };
 
-const AiPromptModal: React.FC<{
-    onGenerate: (content: string) => void,
-    onClose: () => void
-}> = ({ onGenerate, onClose }) => {
-    const [prompt, setPrompt] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleGenerate = async () => {
-        if (!prompt.trim()) return;
-        setIsLoading(true);
-        const fullPrompt = `Generate a professional and detailed job description for the following role: "${prompt}". The description should be suitable for a job posting. Include sections for "Responsibilities", "Qualifications", and "Benefits".`;
-        const result = await generateContent(fullPrompt);
-        onGenerate(result);
-        setIsLoading(false);
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={true} onClose={onClose} title="Generate Job Description with AI">
-            <div className="space-y-4">
-                <div>
-                    <label htmlFor="ai-prompt" className="block text-sm font-medium text-neutral-700">Describe the role</label>
-                    <textarea
-                        id="ai-prompt"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        rows={3}
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                        placeholder="e.g., A senior frontend engineer proficient in React and TypeScript."
-                    />
-                </div>
-                <div className="flex justify-end space-x-2">
-                    <Button variant="secondary" onClick={onClose} disabled={isLoading}>Cancel</Button>
-                    <Button onClick={handleGenerate} disabled={isLoading}>
-                        {isLoading ? 'Generating...' : 'Generate'}
-                    </Button>
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
-
 const AddJobPostingForm: React.FC<{ onClose: () => void; }> = ({ onClose }) => {
     const { addJobPosting } = useAppActions();
     const [title, setTitle] = useState('');
     const [department, setDepartment] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState('');
-    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -151,62 +100,48 @@ const AddJobPostingForm: React.FC<{ onClose: () => void; }> = ({ onClose }) => {
     };
 
     return (
-        <>
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label htmlFor="title" className="block text-sm font-medium text-neutral-700">Job Title</label>
-                        <input
-                            type="text"
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                            placeholder="e.g., Senior Frontend Engineer"
-                        />
-                    </div>
-                     <div>
-                        <label htmlFor="department" className="block text-sm font-medium text-neutral-700">Department</label>
-                        <input
-                            type="text"
-                            id="department"
-                            value={department}
-                            onChange={(e) => setDepartment(e.target.value)}
-                            className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                            placeholder="e.g., Technology"
-                        />
-                    </div>
-                </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <div className="flex justify-between items-center mb-1">
-                        <label htmlFor="description" className="block text-sm font-medium text-neutral-700">Job Description</label>
-                        <Button type="button" size="sm" variant="secondary" onClick={() => setIsAiModalOpen(true)}>
-                            <Icon name="bot" className="w-4 h-4 mr-1" />
-                            Generate with AI
-                        </Button>
-                    </div>
-                    <textarea
-                        id="description"
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={10}
-                        className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                        placeholder="Describe the role, responsibilities, and qualifications..."
+                    <label htmlFor="title" className="block text-sm font-medium text-neutral-700">Job Title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        placeholder="e.g., Senior Frontend Engineer"
                     />
                 </div>
-                {error && <p className="text-red-500 text-sm">{error}</p>}
-                <div className="flex justify-end space-x-2 pt-4">
-                    <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
-                    <Button type="submit">Create Job Posting</Button>
+                    <div>
+                    <label htmlFor="department" className="block text-sm font-medium text-neutral-700">Department</label>
+                    <input
+                        type="text"
+                        id="department"
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
+                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                        placeholder="e.g., Technology"
+                    />
                 </div>
-            </form>
-            {isAiModalOpen && (
-                <AiPromptModal
-                    onClose={() => setIsAiModalOpen(false)}
-                    onGenerate={(generatedContent) => setDescription(generatedContent)}
+            </div>
+            <div>
+                <label htmlFor="description" className="block text-sm font-medium text-neutral-700">Job Description</label>
+                <textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    rows={10}
+                    className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+                    placeholder="Describe the role, responsibilities, and qualifications..."
                 />
-            )}
-        </>
+            </div>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <div className="flex justify-end space-x-2 pt-4">
+                <Button type="button" variant="secondary" onClick={onClose}>Cancel</Button>
+                <Button type="submit">Create Job Posting</Button>
+            </div>
+        </form>
     );
 };
 
@@ -219,10 +154,6 @@ export const RecruitmentManagement: React.FC = () => {
     const [selectedJobId, setSelectedJobId] = useState<string | null>(null);
     const [isAddCandidateModalOpen, setAddCandidateModalOpen] = useState(false);
     const [isAddJobModalOpen, setAddJobModalOpen] = useState(false);
-    const [isSummaryModalOpen, setSummaryModalOpen] = useState(false);
-    const [summaryContent, setSummaryContent] = useState('');
-    const [isSummaryLoading, setIsSummaryLoading] = useState(false);
-    const [candidateForSummary, setCandidateForSummary] = useState<Candidate | null>(null);
 
     const openJobs = useMemo(() => jobPostings.filter(j => j.status === 'Open'), [jobPostings]);
     const selectedJob = useMemo(() => jobPostings.find(j => j.id === selectedJobId), [jobPostings, selectedJobId]);
@@ -245,20 +176,6 @@ export const RecruitmentManagement: React.FC = () => {
     const handleMoveCandidate = (candidateId: string, newStage: CandidateStage) => {
         updateCandidateStage(candidateId, newStage);
     };
-
-    const handleSummarize = async (candidate: Candidate) => {
-        if (!candidate.resumeText) return;
-        setCandidateForSummary(candidate);
-        setSummaryModalOpen(true);
-        setIsSummaryLoading(true);
-        setSummaryContent('');
-
-        const prompt = `Summarize the key skills, years of experience, and past job titles from the following resume text. Format the output with clear headings using markdown:\n\n---\n\n${candidate.resumeText}`;
-        const result = await generateContent(prompt);
-        setSummaryContent(result);
-        setIsSummaryLoading(false);
-    };
-
 
     const STAGES_ORDER: CandidateStage[] = [
         CandidateStageEnum.APPLIED,
@@ -328,7 +245,6 @@ export const RecruitmentManagement: React.FC = () => {
                                                 key={candidate.id} 
                                                 candidate={candidate} 
                                                 onMove={(newStage) => handleMoveCandidate(candidate.id, newStage)} 
-                                                onSummarize={() => handleSummarize(candidate)}
                                             />
                                         ))}
                                     </div>
@@ -347,16 +263,6 @@ export const RecruitmentManagement: React.FC = () => {
 
             <Modal isOpen={isAddJobModalOpen} onClose={() => setAddJobModalOpen(false)} title="Create New Job Posting" size="lg">
                 <AddJobPostingForm onClose={() => setAddJobModalOpen(false)} />
-            </Modal>
-
-            <Modal isOpen={isSummaryModalOpen} onClose={() => setSummaryModalOpen(false)} title={`AI Summary for ${candidateForSummary?.name}`} size="lg">
-                {isSummaryLoading ? (
-                    <div className="text-center p-8">
-                        <p>Generating summary...</p>
-                    </div>
-                ) : (
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: summaryContent.replace(/\n/g, '<br />') }} />
-                )}
             </Modal>
         </div>
     );

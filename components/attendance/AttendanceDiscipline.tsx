@@ -1,16 +1,13 @@
-
-
 import React, { useState, useMemo } from 'react';
 import { useAppState, useAppActions } from '../../hooks/useAppContext';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Modal } from '../common/Modal';
 import { Icon } from '../common/Icon';
-import type { AttendanceRecord, DisciplineRecord } from '../../types';
+import type { AttendanceRecord } from '../../types';
 import { AttendanceStatus, DisciplineActionType } from '../../types';
 import { QRCodeDisplay } from './QRCodeDisplay';
 import { Page } from '../../App';
-import { generateContent } from '../../services/geminiService';
 
 // Helper to get days in a month for the calendar
 const getDaysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
@@ -67,48 +64,6 @@ const AttendanceFormModal: React.FC<{
     );
 };
 
-const AiPromptModal: React.FC<{
-    onGenerate: (content: string) => void,
-    onClose: () => void
-}> = ({ onGenerate, onClose }) => {
-    const [prompt, setPrompt] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-
-    const handleGenerate = async () => {
-        if (!prompt.trim()) return;
-        setIsLoading(true);
-        const fullPrompt = `Generate a formal, professional description for a disciplinary record based on this topic: "${prompt}". The tone should be firm but fair, suitable for an official HR record.`;
-        const result = await generateContent(fullPrompt);
-        onGenerate(result);
-        setIsLoading(false);
-        onClose();
-    };
-
-    return (
-        <Modal isOpen={true} onClose={onClose} title="Generate Description with AI">
-            <div className="space-y-4">
-                <div>
-                    <label htmlFor="ai-prompt" className="block text-sm font-medium text-neutral-700">Describe the incident</label>
-                    <textarea
-                        id="ai-prompt"
-                        value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
-                        rows={3}
-                        className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
-                        placeholder="e.g., Verbal warning for consistent lateness on Monday and Tuesday."
-                    />
-                </div>
-                <div className="flex justify-end space-x-2">
-                    <Button variant="secondary" onClick={onClose} disabled={isLoading}>Cancel</Button>
-                    <Button onClick={handleGenerate} disabled={isLoading}>
-                        {isLoading ? 'Generating...' : 'Generate'}
-                    </Button>
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
 const DisciplineFormModal: React.FC<{
     isOpen: boolean;
     onClose: () => void;
@@ -119,7 +74,6 @@ const DisciplineFormModal: React.FC<{
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [documentName, setDocumentName] = useState<string | undefined>();
-    const [isAiModalOpen, setIsAiModalOpen] = useState(false);
     
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -129,7 +83,6 @@ const DisciplineFormModal: React.FC<{
     };
 
     return (
-        <>
         <Modal isOpen={isOpen} onClose={onClose} title="Add Discipline Record">
              <form onSubmit={handleSubmit} className="space-y-4">
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -145,13 +98,7 @@ const DisciplineFormModal: React.FC<{
                     </div>
                 </div>
                 <div>
-                    <div className="flex justify-between items-center mb-1">
-                        <label className="block text-sm font-medium text-neutral-700">Description</label>
-                        <Button type="button" size="sm" variant="secondary" onClick={() => setIsAiModalOpen(true)}>
-                            <Icon name="bot" className="w-4 h-4 mr-1" />
-                            Generate with AI
-                        </Button>
-                    </div>
+                    <label className="block text-sm font-medium text-neutral-700">Description</label>
                     <textarea value={description} onChange={e => setDescription(e.target.value)} rows={4} className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" placeholder="Describe the incident and action taken..."/>
                 </div>
                 <div className="flex justify-end space-x-2">
@@ -160,13 +107,6 @@ const DisciplineFormModal: React.FC<{
                 </div>
              </form>
         </Modal>
-        {isAiModalOpen && (
-            <AiPromptModal
-                onClose={() => setIsAiModalOpen(false)}
-                onGenerate={(generatedContent) => setDescription(generatedContent)}
-            />
-        )}
-        </>
     );
 };
 

@@ -4,11 +4,6 @@ import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
 
-interface HealthAndWellnessProps {
-    setAiChatOpen: (isOpen: boolean) => void;
-    setAiInitialPrompt: (prompt: string) => void;
-}
-
 const HealthCheckinForm: React.FC = () => {
     const { addHealthLog } = useAppActions();
     const [stressLevel, setStressLevel] = useState(5);
@@ -64,25 +59,11 @@ const HealthCheckinForm: React.FC = () => {
     );
 };
 
-const WellnessHub: React.FC<HealthAndWellnessProps> = ({ setAiChatOpen, setAiInitialPrompt }) => {
-    
-    const handleAskAi = (prompt: string) => {
-        setAiInitialPrompt(prompt);
-        setAiChatOpen(true);
-    };
-
+const WellnessHub: React.FC = () => {
     return (
         <Card className="p-6">
              <h3 className="font-semibold text-lg mb-4">Wellness Hub</h3>
              <div className="space-y-4">
-                <div>
-                    <h4 className="font-semibold">AI Wellness Coach</h4>
-                    <p className="text-sm text-neutral-600 mb-2">Get personalized tips and advice from our AI assistant.</p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                        <Button variant="secondary" size="sm" onClick={() => handleAskAi('Give me some tips for managing stress at work.')}>Stress Management Tips</Button>
-                        <Button variant="secondary" size="sm" onClick={() => handleAskAi('How can I improve my work-life balance?')}>Improve Work-Life Balance</Button>
-                    </div>
-                </div>
                 <div>
                     <h4 className="font-semibold">Resources</h4>
                     <ul className="list-disc list-inside text-primary text-sm space-y-1 mt-2">
@@ -133,7 +114,7 @@ const RecentLogs: React.FC = () => {
 };
 
 
-export const HealthAndWellness: React.FC<HealthAndWellnessProps> = (props) => {
+export const HealthAndWellness: React.FC = () => {
     return (
         <div className="space-y-6">
             <div>
@@ -146,7 +127,7 @@ export const HealthAndWellness: React.FC<HealthAndWellnessProps> = (props) => {
                     <HealthCheckinForm />
                 </div>
                 <div className="lg:col-span-2 space-y-6">
-                    <WellnessHub {...props} />
+                    <WellnessHub />
                     <RecentLogs />
                 </div>
             </div>

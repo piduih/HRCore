@@ -1,15 +1,8 @@
-
 import React, { useState, useMemo } from 'react';
 import { calculateRetirementProjection } from '../../services/payrollService';
 import type { RetirementParams } from '../../services/payrollService';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
-import { Icon } from '../common/Icon';
-
-interface SimulatorProps {
-    setAiChatOpen: (isOpen: boolean) => void;
-    setAiInitialPrompt: (prompt: string) => void;
-}
 
 const InputField: React.FC<{ name: keyof RetirementParams, label: string, value: string | number, onChange: (e: React.ChangeEvent<HTMLInputElement>) => void, type?: string, step?: string, placeholder?: string }> = 
     ({ name, label, value, onChange, type = 'number', step, placeholder }) => (
@@ -29,7 +22,7 @@ const InputField: React.FC<{ name: keyof RetirementParams, label: string, value:
 );
 
 
-export const RetirementSimulator: React.FC<SimulatorProps> = ({ setAiChatOpen, setAiInitialPrompt }) => {
+export const RetirementSimulator: React.FC = () => {
     const [params, setParams] = useState<RetirementParams>({
         currentAge: 30,
         retirementAge: 55,
@@ -50,11 +43,6 @@ export const RetirementSimulator: React.FC<SimulatorProps> = ({ setAiChatOpen, s
         if (!showResults) return null;
         return calculateRetirementProjection(params);
     }, [params, showResults]);
-
-    const handleAskAi = () => {
-        setAiInitialPrompt("Based on my EPF retirement projection, what are some general strategies in Malaysia to increase my savings? Please explain options like voluntary contributions. (Do not give financial advice).");
-        setAiChatOpen(true);
-    };
 
     const formatCurrency = (value: number) => `RM ${value.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -96,12 +84,6 @@ export const RetirementSimulator: React.FC<SimulatorProps> = ({ setAiChatOpen, s
                                         </li>
                                     ))}
                                 </ul>
-                            </div>
-                            <div className="text-center pt-4">
-                                <Button variant="secondary" onClick={handleAskAi}>
-                                    <Icon name="bot" className="w-5 h-5 mr-2" />
-                                    Ask AI for tips to improve savings
-                                </Button>
                             </div>
                         </div>
                     ) : (

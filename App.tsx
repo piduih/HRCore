@@ -6,7 +6,6 @@ import { EmployeeDirectory } from './components/directory/EmployeeDirectory';
 import { LeaveManagement } from './components/leave/LeaveManagement';
 import { ClaimsManagement } from './components/claims/ClaimsManagement';
 import { PayrollCalculator } from './components/payroll/PayrollCalculator';
-import { AiHelperChat } from './components/ai/AiHelperChat';
 import { AppContextProvider } from './context/AppContext';
 import { Resources } from './components/resources/Resources';
 import { AttendanceDiscipline } from './components/attendance/AttendanceDiscipline';
@@ -50,8 +49,6 @@ const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>(Page.DASHBOARD);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [isAiChatOpen, setAiChatOpen] = useState(false);
-  const [aiInitialPrompt, setAiInitialPrompt] = useState('');
   const [isQrScannerOpen, setQrScannerOpen] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'info' | 'error' } | null>(null);
 
@@ -75,6 +72,14 @@ const App: React.FC = () => {
       window.removeEventListener('offline', handleOffline);
       window.removeEventListener('online', handleOnline);
     };
+  }, []);
+
+  useEffect(() => {
+     // Remove loader if present
+     const loader = document.getElementById('loader');
+     if (loader) {
+         loader.remove();
+     }
   }, []);
 
   const renderPage = useCallback(() => {
@@ -104,11 +109,11 @@ const App: React.FC = () => {
       case Page.ENGAGEMENT:
         return <Engagement />;
       case Page.HEALTH_WELLNESS:
-        return <HealthAndWellness setAiChatOpen={setAiChatOpen} setAiInitialPrompt={setAiInitialPrompt} />;
+        return <HealthAndWellness />;
       case Page.ANALYTICS:
         return <AnalyticsDashboard />;
       case Page.PAYROLL:
-        return <PayrollCalculator setAiChatOpen={setAiChatOpen} setAiInitialPrompt={setAiInitialPrompt} />;
+        return <PayrollCalculator />;
       case Page.PAYROLL_PROCESSING:
         return <PayrollProcessing />;
       case Page.RESOURCES:
@@ -123,7 +128,6 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setSidebarOpen(false);
-    setAiChatOpen(false);
     setCurrentPage(Page.DASHBOARD);
   };
 
@@ -150,12 +154,6 @@ const App: React.FC = () => {
             {renderPage()}
           </main>
         </div>
-        <AiHelperChat 
-          isOpen={isAiChatOpen} 
-          setIsOpen={setAiChatOpen} 
-          initialPrompt={aiInitialPrompt}
-          clearInitialPrompt={() => setAiInitialPrompt('')}
-        />
         <QRCodeScanner 
           isOpen={isQrScannerOpen}
           onClose={() => setQrScannerOpen(false)}

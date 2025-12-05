@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '../common/Card';
 import { SalaryCalculator } from './SalaryCalculator';
@@ -7,12 +6,7 @@ import { EisBenefitCalculator } from './EisBenefitCalculator';
 
 type FinancialToolTab = 'salary' | 'retirement' | 'eis';
 
-interface PayrollCalculatorProps {
-    setAiChatOpen: (isOpen: boolean) => void;
-    setAiInitialPrompt: (prompt: string) => void;
-}
-
-export const PayrollCalculator: React.FC<PayrollCalculatorProps> = ({ setAiChatOpen, setAiInitialPrompt }) => {
+export const PayrollCalculator: React.FC = () => {
     const [activeTab, setActiveTab] = useState<FinancialToolTab>('salary');
 
     const tabs: { id: FinancialToolTab, label: string }[] = [
@@ -26,9 +20,9 @@ export const PayrollCalculator: React.FC<PayrollCalculatorProps> = ({ setAiChatO
             case 'salary':
                 return <SalaryCalculator />;
             case 'retirement':
-                return <RetirementSimulator setAiChatOpen={setAiChatOpen} setAiInitialPrompt={setAiInitialPrompt} />;
+                return <RetirementSimulator />;
             case 'eis':
-                return <EisBenefitCalculator setAiChatOpen={setAiChatOpen} setAiInitialPrompt={setAiInitialPrompt} />;
+                return <EisBenefitCalculator />;
             default:
                 return null;
         }

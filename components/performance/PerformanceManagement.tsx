@@ -1,14 +1,11 @@
-
-
 import React, { useState, useMemo } from 'react';
 import { useAppState, useAppActions } from '../../hooks/useAppContext';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
 import { Modal } from '../common/Modal';
-import type { PerformanceGoal, PerformanceReview, Employee } from '../../types';
+import type { PerformanceGoal, PerformanceReview } from '../../types';
 import { GoalStatus, ReviewStatus } from '../../types';
-import { generateContent } from '../../services/geminiService';
 
 const GoalStatusTag: React.FC<{ status: GoalStatus }> = ({ status }) => {
     const statusStyles: Record<GoalStatus, string> = {
@@ -86,9 +83,6 @@ export const PerformanceManagement: React.FC = () => {
     const [activeTab, setActiveTab] = useState('my_performance');
     const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>(currentUser.id);
     const [isGoalModalOpen, setGoalModalOpen] = useState(false);
-    const [isInsightsModalOpen, setInsightsModalOpen] = useState(false);
-    const [insightsContent, setInsightsContent] = useState('');
-    const [isInsightsLoading, setIsInsightsLoading] = useState(false);
 
     const teamMembers = useMemo(() => employees.filter(e => e.managerId === currentUser.id), [employees, currentUser.id]);
     
@@ -106,23 +100,6 @@ export const PerformanceManagement: React.FC = () => {
         });
         setGoalModalOpen(false);
     }
-
-    const handleGetAiInsights = async () => {
-        if (reviewsForDisplay.length === 0) return;
-        setInsightsModalOpen(true);
-        setIsInsightsLoading(true);
-        setInsightsContent('');
-
-        const reviewsText = reviewsForDisplay.map(r => 
-            `Review Period: ${r.reviewPeriod}\nSelf-Assessment: ${r.selfAssessment || 'N/A'}\nManager's Assessment: ${r.managerAssessment || 'N/A'}`
-        ).join('\n\n');
-
-        const prompt = `Analyze the following performance reviews for an employee. Identify recurring themes, strengths, and areas for improvement. Based on this, suggest 2-3 relevant training topics. Format the output with clear headings.\n\nReviews:\n${reviewsText}`;
-
-        const result = await generateContent(prompt);
-        setInsightsContent(result);
-        setIsInsightsLoading(false);
-    };
     
     const GoalForm: React.FC<{onClose: () => void, employeeName: string}> = ({ onClose, employeeName }) => {
         const [title, setTitle] = useState('');
@@ -189,10 +166,6 @@ export const PerformanceManagement: React.FC = () => {
                         </div>
                          {selectedEmployeeId && (
                              <div className="flex items-center space-x-2 flex-shrink-0">
-                                <Button variant="secondary" onClick={handleGetAiInsights} disabled={reviewsForDisplay.length === 0}>
-                                    <Icon name="bot" className="w-4 h-4 mr-2" />
-                                    Get AI Insights
-                                </Button>
                                 <Button onClick={() => setGoalModalOpen(true)}>
                                     <Icon name="plus" className="w-4 h-4 mr-2" />
                                     Set New Goal
@@ -220,15 +193,6 @@ export const PerformanceManagement: React.FC = () => {
             
             <Modal isOpen={isGoalModalOpen} onClose={() => setGoalModalOpen(false)} title={`Set New Goal for ${employees.find(e => e.id === selectedEmployeeId)?.name}`}>
                 <GoalForm onClose={() => setGoalModalOpen(false)} employeeName={employees.find(e => e.id === selectedEmployeeId)?.name || ''} />
-            </Modal>
-             <Modal isOpen={isInsightsModalOpen} onClose={() => setInsightsModalOpen(false)} title={`AI Insights for ${employees.find(e => e.id === selectedEmployeeId)?.name}`} size="lg">
-                {isInsightsLoading ? (
-                    <div className="text-center p-8">
-                        <p>Analyzing reviews...</p>
-                    </div>
-                ) : (
-                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: insightsContent.replace(/\n/g, '<br />') }} />
-                )}
             </Modal>
         </div>
     );
