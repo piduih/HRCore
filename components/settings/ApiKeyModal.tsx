@@ -9,12 +9,15 @@ interface ApiKeyModalProps {
     onClose: () => void;
 }
 
+type Provider = 'gemini' | 'openai' | 'anthropic';
+
 export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => {
     const [keys, setKeys] = useState({
         gemini: '',
         openai: '',
         anthropic: ''
     });
+    const [activeProvider, setActiveProvider] = useState<Provider>('gemini');
 
     useEffect(() => {
         if (isOpen) {
@@ -23,6 +26,8 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
                 openai: localStorage.getItem('HR_CORE_OPENAI_KEY') || '',
                 anthropic: localStorage.getItem('HR_CORE_ANTHROPIC_KEY') || ''
             });
+            const savedProvider = localStorage.getItem('HR_CORE_ACTIVE_PROVIDER') as Provider;
+            if (savedProvider) setActiveProvider(savedProvider);
         }
     }, [isOpen]);
 
@@ -39,6 +44,8 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
 
         if (keys.anthropic) localStorage.setItem('HR_CORE_ANTHROPIC_KEY', keys.anthropic);
         else localStorage.removeItem('HR_CORE_ANTHROPIC_KEY');
+
+        localStorage.setItem('HR_CORE_ACTIVE_PROVIDER', activeProvider);
 
         // Reload to apply changes immediately
         window.location.reload();
@@ -59,38 +66,76 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Tetapan API Key">
+        <Modal isOpen={isOpen} onClose={onClose} title="Tetapan AI & API Key">
             <div className="space-y-6">
                 <p className="text-sm text-neutral-600">
-                    Masukkan API Key anda untuk membolehkan ciri-ciri AI. Kunci disimpan secara tempatan di dalam pelayar anda (Local Storage).
+                    Masukkan API Key untuk penyedia pilihan anda. Pilih penyedia utama yang akan digunakan oleh sistem.
                 </p>
+                
+                <div className="bg-white p-4 rounded-lg border border-neutral-200 shadow-sm mb-6">
+                    <label className="block text-sm font-bold text-neutral-800 mb-2">Penyedia AI Utama (Active Provider)</label>
+                    <div className="flex space-x-4">
+                        <label className="inline-flex items-center">
+                            <input 
+                                type="radio" 
+                                className="form-radio text-primary" 
+                                name="provider" 
+                                value="gemini" 
+                                checked={activeProvider === 'gemini'} 
+                                onChange={() => setActiveProvider('gemini')}
+                            />
+                            <span className="ml-2">Gemini</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input 
+                                type="radio" 
+                                className="form-radio text-primary" 
+                                name="provider" 
+                                value="openai" 
+                                checked={activeProvider === 'openai'} 
+                                onChange={() => setActiveProvider('openai')}
+                            />
+                            <span className="ml-2">OpenAI</span>
+                        </label>
+                        <label className="inline-flex items-center">
+                            <input 
+                                type="radio" 
+                                className="form-radio text-primary" 
+                                name="provider" 
+                                value="anthropic" 
+                                checked={activeProvider === 'anthropic'} 
+                                onChange={() => setActiveProvider('anthropic')}
+                            />
+                            <span className="ml-2">Anthropic</span>
+                        </label>
+                    </div>
+                </div>
 
                 {/* Google Gemini Section */}
-                <div className="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                <div className={`p-4 rounded-lg border ${activeProvider === 'gemini' ? 'bg-blue-50 border-blue-200' : 'bg-neutral-50 border-neutral-200'}`}>
                     <div className="flex items-center space-x-2 mb-2">
-                        <Icon name="bot" className="w-5 h-5 text-blue-600" />
-                        <h4 className="font-bold text-blue-900">Google Gemini</h4>
+                        <Icon name="bot" className={`w-5 h-5 ${activeProvider === 'gemini' ? 'text-blue-600' : 'text-neutral-500'}`} />
+                        <h4 className={`font-bold ${activeProvider === 'gemini' ? 'text-blue-900' : 'text-neutral-700'}`}>Google Gemini</h4>
                     </div>
                     <div className="space-y-3">
                         <div>
-                            <label className="block text-xs font-semibold text-neutral-500 mb-1">Manual Input</label>
                             <input
                                 type="password"
                                 name="gemini"
                                 value={keys.gemini}
                                 onChange={handleChange}
-                                placeholder="sk-..."
+                                placeholder="Tampal API Key Gemini di sini..."
                                 className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                             />
                         </div>
                         <div className="relative flex py-1 items-center">
-                            <div className="flex-grow border-t border-blue-200"></div>
-                            <span className="flex-shrink-0 mx-2 text-xs text-blue-400">ATAU</span>
-                            <div className="flex-grow border-t border-blue-200"></div>
+                            <div className="flex-grow border-t border-neutral-300"></div>
+                            <span className="flex-shrink-0 mx-2 text-xs text-neutral-400">ATAU</span>
+                            <div className="flex-grow border-t border-neutral-300"></div>
                         </div>
                         <button
                             onClick={handleAiStudioSelect}
-                            className="w-full flex justify-center items-center px-4 py-2 border border-blue-300 shadow-sm text-sm font-medium rounded-md text-blue-700 bg-white hover:bg-blue-50"
+                            className="w-full flex justify-center items-center px-4 py-2 border border-neutral-300 shadow-sm text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50"
                         >
                             Pilih melalui AI Studio
                         </button>
@@ -98,10 +143,10 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
                 </div>
 
                 {/* OpenAI Section */}
-                <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                <div className={`p-4 rounded-lg border ${activeProvider === 'openai' ? 'bg-green-50 border-green-200' : 'bg-neutral-50 border-neutral-200'}`}>
                      <div className="flex items-center space-x-2 mb-2">
-                        <Icon name="cube" className="w-5 h-5 text-neutral-600" />
-                        <h4 className="font-bold text-neutral-900">OpenAI (ChatGPT)</h4>
+                        <Icon name="cube" className={`w-5 h-5 ${activeProvider === 'openai' ? 'text-green-600' : 'text-neutral-500'}`} />
+                        <h4 className={`font-bold ${activeProvider === 'openai' ? 'text-green-900' : 'text-neutral-700'}`}>OpenAI (GPT-4o/Mini)</h4>
                     </div>
                     <div>
                         <input
@@ -116,10 +161,10 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
                 </div>
 
                 {/* Anthropic Section */}
-                <div className="p-4 bg-neutral-50 rounded-lg border border-neutral-200">
+                <div className={`p-4 rounded-lg border ${activeProvider === 'anthropic' ? 'bg-purple-50 border-purple-200' : 'bg-neutral-50 border-neutral-200'}`}>
                      <div className="flex items-center space-x-2 mb-2">
-                        <Icon name="cube" className="w-5 h-5 text-neutral-600" />
-                        <h4 className="font-bold text-neutral-900">Anthropic (Claude)</h4>
+                        <Icon name="cube" className={`w-5 h-5 ${activeProvider === 'anthropic' ? 'text-purple-600' : 'text-neutral-500'}`} />
+                        <h4 className={`font-bold ${activeProvider === 'anthropic' ? 'text-purple-900' : 'text-neutral-700'}`}>Anthropic (Claude 3.5 Sonnet)</h4>
                     </div>
                     <div>
                         <input
@@ -130,6 +175,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ isOpen, onClose }) => 
                             placeholder="sk-ant-..."
                             className="block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
                         />
+                        <p className="text-xs text-neutral-500 mt-1">Nota: Anthropic mungkin memerlukan proksi jika digunakan terus dari pelayar (CORS).</p>
                     </div>
                 </div>
 

@@ -71,13 +71,16 @@ export const AiHelperChat: React.FC<AiHelperChatProps> = ({ isOpen, setIsOpen, i
         
         const userMessage: Message = { sender: 'user', text: input };
         const currentInput = input;
+        const currentHistory = [...messages]; // Capture current history before updating state
         
         setInput('');
         setIsLoading(true);
         setMessages(prev => [...prev, userMessage, { sender: 'bot', text: '' }]);
 
         try {
-            const stream = sendMessageToAiStream(currentInput);
+            // Pass history to support stateless providers like OpenAI/Anthropic
+            const stream = sendMessageToAiStream(currentInput, currentHistory);
+            
             for await (const chunk of stream) {
                 setMessages(prev => {
                     const newMessages = [...prev];
@@ -112,9 +115,16 @@ export const AiHelperChat: React.FC<AiHelperChatProps> = ({ isOpen, setIsOpen, i
             
             {isOpen && (
                  <div className="fixed bottom-24 right-6 w-full max-w-sm h-[60vh] bg-white rounded-lg shadow-2xl flex flex-col z-50">
-                    <header className="bg-primary text-white p-4 rounded-t-lg flex items-center">
-                        <Icon name="bot" className="w-6 h-6 mr-2" />
-                        <h3 className="font-semibold">HR Policy Helper</h3>
+                    <header className="bg-primary text-white p-4 rounded-t-lg flex items-center justify-between">
+                        <div className="flex items-center">
+                            <Icon name="bot" className="w-6 h-6 mr-2" />
+                            <h3 className="font-semibold">HR Policy Helper</h3>
+                        </div>
+                        <button onClick={() => {
+                             if(window.confirm("Clear chat history?")) {
+                                 setMessages([{ sender: 'bot', text: "Chat cleared. How can I help you?" }]);
+                             }
+                        }} className="text-white text-xs underline">Clear</button>
                     </header>
 
                     <main className="flex-1 p-4 overflow-y-auto space-y-4">
