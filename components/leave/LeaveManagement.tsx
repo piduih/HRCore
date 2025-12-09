@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import type { LeaveRequest } from '../../types';
 import { RequestStatus, LeaveType } from '../../types';
@@ -72,7 +71,7 @@ const LeaveTable: React.FC<{ requests: LeaveRequest[], isManagerView?: boolean }
     const { updateRequestStatus } = useAppActions();
     const getEmployeeName = (id: string) => employees.find(e => e.id === id)?.name || 'Unknown';
     
-    const handleAction = (id: string, status: 'Approved' | 'Rejected') => {
+    const handleAction = (id: string, status: RequestStatus) => {
         if(window.confirm(`Are you sure you want to ${status.toLowerCase()} this request?`)) {
             updateRequestStatus(id, status, 'leave');
         }
@@ -101,8 +100,8 @@ const LeaveTable: React.FC<{ requests: LeaveRequest[], isManagerView?: boolean }
                             <td className="px-6 py-4"><Tag status={req.status} /></td>
                             {isManagerView && currentUser.isManager && req.status === RequestStatus.PENDING && (
                                 <td className="px-6 py-4 flex space-x-2">
-                                    <Button size="sm" onClick={() => handleAction(req.id, 'Approved')}>Approve</Button>
-                                    <Button size="sm" variant="danger" onClick={() => handleAction(req.id, 'Rejected')}>Reject</Button>
+                                    <Button size="sm" onClick={() => handleAction(req.id, RequestStatus.APPROVED)}>Approve</Button>
+                                    <Button size="sm" variant="danger" onClick={() => handleAction(req.id, RequestStatus.REJECTED)}>Reject</Button>
                                 </td>
                             )}
                         </tr>

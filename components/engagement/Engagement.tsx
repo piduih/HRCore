@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { useAppState, useAppActions } from '../../hooks/useAppContext';
 import { Card } from '../common/Card';
@@ -122,10 +121,10 @@ const ViewResultsModal: React.FC<{ survey: Survey, responses: SurveyResponse[], 
             if (question.type === SurveyQuestionType.RATING) {
                 const ratings = questionResponses.map(r => r!.value as number);
                 const average = ratings.length > 0 ? (ratings.reduce((a,b) => a + b, 0) / ratings.length).toFixed(1) : 'N/A';
-                return { question, type: 'rating', average, count: ratings.length };
+                return { question, type: 'rating' as const, average, count: ratings.length };
             } else {
                 const textAnswers = questionResponses.map(r => r!.value as string);
-                return { question, type: 'text', answers: textAnswers, count: textAnswers.length };
+                return { question, type: 'text' as const, answers: textAnswers, count: textAnswers.length };
             }
         });
     }, [survey, responses]);

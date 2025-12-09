@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import type { Employee } from '../../types';
 import { Button } from '../common/Button';
@@ -21,16 +22,26 @@ const initialFormState = {
   annualLeaveTaken: 0,
   sickLeaveEntitled: 14,
   sickLeaveTaken: 0,
+  gender: 'Male' as 'Male' | 'Female',
+  joinDate: new Date().toISOString().split('T')[0],
 };
 
 export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, onClose }) => {
   const [formData, setFormData] = useState(initialFormState);
-  // FIX: Correctly type the errors state to allow string values for all properties, including numeric ones.
   const [errors, setErrors] = useState<Partial<Record<keyof typeof initialFormState, string>>>({});
 
   useEffect(() => {
     if (employee) {
-      setFormData(employee);
+      setFormData({
+          ...employee,
+          // Ensure salary is number
+          salary: Number(employee.salary),
+          // Ensure numeric values are numbers
+          annualLeaveEntitled: Number(employee.annualLeaveEntitled),
+          annualLeaveTaken: Number(employee.annualLeaveTaken),
+          sickLeaveEntitled: Number(employee.sickLeaveEntitled),
+          sickLeaveTaken: Number(employee.sickLeaveTaken),
+      });
     } else {
       setFormData(initialFormState);
     }
@@ -39,8 +50,6 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, on
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
-    // FIX: Handle different input types to avoid type errors.
-    // Specifically, convert number input values from string to number before setting state.
     if (type === 'checkbox') {
         const { checked } = e.target as HTMLInputElement;
         setFormData(prev => ({ ...prev, [name]: checked }));
@@ -52,7 +61,6 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, on
   };
 
   const validate = () => {
-    // FIX: Use the corrected error type for the validation object.
     const newErrors: Partial<Record<keyof typeof initialFormState, string>> = {};
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.position) newErrors.position = 'Position is required';
@@ -60,6 +68,7 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, on
     if (!formData.email) newErrors.email = 'Email is required';
     if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = 'Email is not valid';
     if (Number(formData.salary) <= 0) newErrors.salary = 'Salary must be a positive number';
+    if (!formData.joinDate) newErrors.joinDate = 'Join date is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -74,6 +83,8 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, on
         annualLeaveTaken: Number(formData.annualLeaveTaken),
         sickLeaveEntitled: Number(formData.sickLeaveEntitled),
         sickLeaveTaken: Number(formData.sickLeaveTaken),
+        // Ensure gender is strictly typed
+        gender: formData.gender as 'Male' | 'Female',
       };
       onSave(employee ? { ...dataToSave, id: employee.id, tenantId: employee.tenantId } : dataToSave);
     }
@@ -103,6 +114,20 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({ employee, onSave, on
           <label htmlFor="department" className="block text-sm font-medium text-neutral-700">Department</label>
           <input type="text" name="department" id="department" value={formData.department} onChange={handleChange} className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" />
            {errors.department && <p className="text-red-500 text-xs mt-1">{errors.department}</p>}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+            <label htmlFor="joinDate" className="block text-sm font-medium text-neutral-700">Join Date</label>
+            <input type="date" name="joinDate" id="joinDate" value={formData.joinDate} onChange={handleChange} className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm" />
+            {errors.joinDate && <p className="text-red-500 text-xs mt-1">{errors.joinDate}</p>}
+        </div>
+         <div>
+            <label htmlFor="gender" className="block text-sm font-medium text-neutral-700">Gender</label>
+            <select name="gender" id="gender" value={formData.gender} onChange={handleChange} className="mt-1 block w-full rounded-md border-neutral-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
         </div>
       </div>
        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

@@ -1,5 +1,4 @@
 
-
 import React, { useMemo } from 'react';
 import type { Employee } from '../../types';
 import { Modal } from '../common/Modal';
@@ -47,7 +46,8 @@ const RadarChart: React.FC<{ data: { label: string, score: number }[] }> = ({ da
         const radius = center - 5;
         const x = center + radius * Math.cos(angle);
         const y = center + radius * Math.sin(angle);
-        let textAnchor = 'middle';
+        
+        let textAnchor: "start" | "middle" | "end" = 'middle';
         if (x < center - 5) textAnchor = 'end';
         if (x > center + 5) textAnchor = 'start';
         return { x, y, label, textAnchor };
