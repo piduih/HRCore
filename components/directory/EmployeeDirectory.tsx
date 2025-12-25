@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useAppState, useAppActions } from '../../hooks/useAppContext';
 import { Button } from '../common/Button';
@@ -39,7 +38,7 @@ export const EmployeeDirectory: React.FC = () => {
   };
 
   const handleDelete = (employeeId: string) => {
-    if (window.confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
+    if (window.confirm('Adakah anda pasti mahu memadam pekerja ini? Tindakan ini tidak boleh dikembalikan.')) {
       deleteEmployee(employeeId);
     }
   };
@@ -67,16 +66,16 @@ export const EmployeeDirectory: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold">Employee Directory</h2>
-          <p className="text-neutral-500">Find and manage contact information for colleagues.</p>
+          <h2 className="text-2xl font-bold">Direktori Pekerja</h2>
+          <p className="text-neutral-500">Cari dan urus maklumat rakan sekerja anda.</p>
         </div>
-        <Button onClick={handleAddNew}>Add New Employee</Button>
+        <Button onClick={handleAddNew}>Tambah Pekerja Baru</Button>
       </div>
       
       <div className="max-w-md">
           <input
             type="text"
-            placeholder="Search by name, position, or department..."
+            placeholder="Cari nama, jawatan, atau jabatan..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-primary focus:border-primary"
@@ -88,11 +87,11 @@ export const EmployeeDirectory: React.FC = () => {
             <table className="w-full text-sm text-left text-neutral-500">
                 <thead className="text-xs text-neutral-700 uppercase bg-neutral-50">
                     <tr>
-                        <th scope="col" className="px-6 py-3">Employee</th>
-                        <th scope="col" className="px-6 py-3">Position</th>
-                        <th scope="col" className="px-6 py-3">Department</th>
-                        <th scope="col" className="px-6 py-3">Contact</th>
-                        <th scope="col" className="px-6 py-3">Actions</th>
+                        <th scope="col" className="px-6 py-3">Pekerja</th>
+                        <th scope="col" className="px-6 py-3">Jawatan</th>
+                        <th scope="col" className="px-6 py-3">Jabatan</th>
+                        <th scope="col" className="px-6 py-3">Hubungi</th>
+                        <th scope="col" className="px-6 py-3">Tindakan</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -140,7 +139,7 @@ export const EmployeeDirectory: React.FC = () => {
       <Modal 
         isOpen={isFormModalOpen} 
         onClose={() => setIsFormModalOpen(false)} 
-        title={editingEmployee ? 'Edit Employee' : 'Add New Employee'}
+        title={editingEmployee ? 'Kemaskini Pekerja' : 'Tambah Pekerja Baru'}
         size="lg"
       >
         <EmployeeForm 

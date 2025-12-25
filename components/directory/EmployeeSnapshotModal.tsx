@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import type { Employee } from '../../types';
 import { Modal } from '../common/Modal';
@@ -89,22 +88,22 @@ export const EmployeeSnapshotModal: React.FC<EmployeeSnapshotModalProps> = ({ is
         const attendanceRate = myAttendance.length > 0 ? Math.round((presentDays / myAttendance.length) * 100) : 100;
 
         const performanceMap: Record<number, { index: string, color: string }> = {
-            1: { index: "Needs Improvement", color: "text-red-600" },
-            2: { index: "Below Expectations", color: "text-orange-600" },
-            3: { index: "Meets Expectations", color: "text-yellow-600" },
-            4: { index: "Exceeds Expectations", color: "text-green-600" },
-            5: { index: "Outstanding", color: "text-primary" },
+            1: { index: "Perlu Pembaikan", color: "text-red-600" },
+            2: { index: "Bawah Jangkaan", color: "text-orange-600" },
+            3: { index: "Memenuhi Jangkaan", color: "text-yellow-600" },
+            4: { index: "Melebihi Jangkaan", color: "text-green-600" },
+            5: { index: "Cemerlang", color: "text-primary" },
         };
-        const performance = latestReview?.rating ? performanceMap[latestReview.rating] : { index: "N/A", color: "text-neutral-600" };
+        const performance = latestReview?.rating ? performanceMap[latestReview.rating] : { index: "Tiada Data", color: "text-neutral-600" };
         
         // Simulate competency scores from overall rating
         const rating = latestReview?.rating || 3;
         const competencyScores = [
-            { label: 'Technical', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
-            { label: 'Communication', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
-            { label: 'Teamwork', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
-            { label: 'Leadership', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
-            { label: 'Initiative', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
+            { label: 'Teknikal', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
+            { label: 'Komunikasi', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
+            { label: 'Kerjasama', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
+            { label: 'Kepimpinan', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
+            { label: 'Inisiatif', score: rating + (Math.random() > 0.5 ? 0.5 : -0.5) },
         ].map(s => ({...s, score: Math.max(1, Math.min(5, s.score))})); // Clamp scores between 1 and 5
         
 
@@ -121,7 +120,7 @@ export const EmployeeSnapshotModal: React.FC<EmployeeSnapshotModalProps> = ({ is
     if (!isOpen || !snapshotData) return null;
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose} title="Employee Snapshot" size="lg">
+        <Modal isOpen={isOpen} onClose={onClose} title="Ringkasan Pekerja (Snapshot)" size="lg">
             <div className="space-y-6">
                 <div className="text-center p-4 border-b">
                     <img src={snapshotData.avatarUrl} alt={snapshotData.name} className="w-24 h-24 rounded-full mx-auto mb-2" />
@@ -130,27 +129,27 @@ export const EmployeeSnapshotModal: React.FC<EmployeeSnapshotModalProps> = ({ is
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <StatDisplay label="Performance Index" value={snapshotData.performance.index} colorClass={snapshotData.performance.color} />
-                    <StatDisplay label="Goal Completion" value={`${snapshotData.goalCompletionRate}%`} />
-                    <StatDisplay label="Attendance Rate" value={`${snapshotData.attendanceRate}%`} />
+                    <StatDisplay label="Indeks Prestasi" value={snapshotData.performance.index} colorClass={snapshotData.performance.color} />
+                    <StatDisplay label="Pencapaian Matlamat" value={`${snapshotData.goalCompletionRate}%`} />
+                    <StatDisplay label="Kadar Kehadiran" value={`${snapshotData.attendanceRate}%`} />
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                      <div className="flex flex-col items-center">
-                        <h4 className="font-semibold mb-2">Core Competencies</h4>
+                        <h4 className="font-semibold mb-2">Kompetensi Utama</h4>
                         <RadarChart data={snapshotData.competencyScores} />
                     </div>
                     <div className="space-y-4">
                         <div>
-                            <h4 className="font-semibold">Manager's Feedback</h4>
+                            <h4 className="font-semibold">Ulasan Pengurus</h4>
                             <p className="text-sm text-neutral-600 p-3 bg-neutral-50 rounded-md mt-1 italic">
-                                {snapshotData.latestReview?.managerAssessment || "No recent feedback available."}
+                                {snapshotData.latestReview?.managerAssessment || "Tiada ulasan terkini."}
                             </p>
                         </div>
                          <div>
-                            <h4 className="font-semibold">Self-Assessment</h4>
+                            <h4 className="font-semibold">Penilaian Kendiri</h4>
                             <p className="text-sm text-neutral-600 p-3 bg-neutral-50 rounded-md mt-1 italic">
-                                {snapshotData.latestReview?.selfAssessment || "No recent self-assessment."}
+                                {snapshotData.latestReview?.selfAssessment || "Tiada penilaian kendiri."}
                             </p>
                         </div>
                     </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Page } from '../../App';
 import { Icon } from '../common/Icon';
@@ -95,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, i
                 <h1 className="text-2xl font-bold text-primary">HR Core</h1>
             </div>
             <nav className="flex-1 p-4 overflow-y-auto">
-                <NavGroup title="General">
+                <NavGroup title="Umum (General)">
                     {navItems.general.map((item) => (
                         <NavItem
                             key={item.label}
@@ -106,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, i
                         />
                     ))}
                 </NavGroup>
-                <NavGroup title="Management">
+                <NavGroup title="Pengurusan (Management)">
                     {navItems.management.map((item) => (
                         <NavItem
                             key={item.label}
@@ -117,7 +116,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, i
                         />
                     ))}
                 </NavGroup>
-                 <NavGroup title="Company">
+                 <NavGroup title="Syarikat (Company)">
                     {navItems.company.map((item) => (
                         <NavItem
                             key={item.label}
@@ -128,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, i
                         />
                     ))}
                 </NavGroup>
-                 <NavGroup title="System">
+                 <NavGroup title="Sistem (System)">
                     {navItems.system.map((item) => (
                         <NavItem
                             key={item.label}
@@ -152,7 +151,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, setCurrentPage, i
                             className="flex items-center p-3 my-1 rounded-lg transition-colors text-red-600 hover:bg-red-50"
                         >
                             <Icon name="logout" className="w-5 h-5 mr-3" />
-                            <span>Logout</span>
+                            <span>Keluar (Logout)</span>
                         </a>
                     </li>
                 </ul>

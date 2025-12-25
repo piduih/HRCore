@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Icon } from '../common/Icon';
 
 interface LoginPageProps {
   onLogin: () => void;
+  onBack: () => void;
 }
 
-export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
+export const LoginPage: React.FC<LoginPageProps> = ({ onLogin, onBack }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -30,111 +30,135 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-100 flex flex-col justify-center items-center p-4 relative overflow-hidden">
-      {/* Background Decoration - Extended height to ensure white text is visible */}
-      <div className="absolute top-0 left-0 w-full h-96 bg-primary transform -skew-y-3 origin-top-left z-0"></div>
-      
-      <div className="w-full max-w-md z-10">
-        <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white text-primary shadow-lg mb-4">
-                <Icon name="cube" className="w-8 h-8" />
+    <div className="min-h-screen bg-white flex">
+      {/* Left Side - Visual & Trust (Hidden on Mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 bg-neutral-900 relative overflow-hidden flex-col justify-between p-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary-900 to-neutral-900 opacity-90 z-10"></div>
+        <img 
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80" 
+            alt="Office background" 
+            className="absolute inset-0 w-full h-full object-cover grayscale opacity-30"
+        />
+        
+        <div className="relative z-20">
+            <div className="flex items-center gap-2 text-white mb-8">
+                <Icon name="cube" className="w-8 h-8 text-primary-400" />
+                <span className="text-2xl font-bold tracking-tight">HR Core</span>
             </div>
-            <h1 className="text-3xl font-bold text-white">HR Core</h1>
-            <p className="text-white mt-2 font-medium">Sistem Pengurusan Sumber Manusia</p>
+            <h2 className="text-4xl font-bold text-white leading-tight mb-6">
+                Urus pasukan anda dengan <br />
+                <span className="text-primary-400">keyakinan penuh.</span>
+            </h2>
+            <p className="text-neutral-400 text-lg max-w-md">
+                Sertai ribuan pengurus yang telah beralih ke sistem digital untuk kecekapan maksimum.
+            </p>
         </div>
 
-        <Card className="p-8 shadow-xl border-t-4 border-primary">
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-neutral-700">Email Address</label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Icon name="user" className="h-5 w-5 text-neutral-400" />
+        <div className="relative z-20">
+            <div className="flex items-center gap-4 mb-4">
+                 <div className="flex -space-x-4">
+                    <img className="w-10 h-10 rounded-full border-2 border-neutral-900" src="https://i.pravatar.cc/100?img=1" alt="" />
+                    <img className="w-10 h-10 rounded-full border-2 border-neutral-900" src="https://i.pravatar.cc/100?img=2" alt="" />
+                    <img className="w-10 h-10 rounded-full border-2 border-neutral-900" src="https://i.pravatar.cc/100?img=3" alt="" />
                 </div>
-                <input
-                  type="email"
-                  id="email"
-                  className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-neutral-300 rounded-md py-2.5"
-                  placeholder="name@company.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-neutral-700">Password</label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Icon name="settings" className="h-5 w-5 text-neutral-400" />
+                <div className="text-white">
+                    <p className="font-bold">500+ Syarikat</p>
+                    <p className="text-xs text-neutral-400">Mempercayai kami</p>
                 </div>
-                <input
-                  type="password"
-                  id="password"
-                  className="focus:ring-primary focus:border-primary block w-full pl-10 sm:text-sm border-neutral-300 rounded-md py-2.5"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
+            </div>
+             <p className="text-neutral-500 text-sm">© {new Date().getFullYear()} HR Core System. All rights reserved.</p>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-8 sm:p-12 lg:p-24 bg-white relative">
+        <button onClick={onBack} className="absolute top-8 left-8 text-neutral-500 hover:text-neutral-900 flex items-center gap-2 transition-colors">
+            <Icon name="arrow-left" className="w-4 h-4" /> {/* Assuming arrow-left needs to be added or use chevron */}
+            Kembali
+        </button>
+
+        <div className="w-full max-w-sm space-y-8">
+            <div className="text-center lg:text-left">
+                <h2 className="text-3xl font-bold text-neutral-900">Selamat Kembali</h2>
+                <p className="mt-2 text-neutral-600">Sila log masuk ke akaun anda.</p>
             </div>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-900">
-                  Remember me
-                </label>
-              </div>
+            <form onSubmit={handleLogin} className="space-y-6">
+                <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-neutral-700">Emel Kerja</label>
+                    <div className="mt-1">
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="appearance-none block w-full px-3 py-3 border border-neutral-300 rounded-lg placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-shadow"
+                            placeholder="nama@syarikat.com"
+                        />
+                    </div>
+                </div>
 
-              <div className="text-sm">
-                <a href="#" className="font-medium text-primary hover:text-primary-700">
-                  Forgot password?
-                </a>
-              </div>
-            </div>
+                <div>
+                    <div className="flex items-center justify-between">
+                         <label htmlFor="password" className="block text-sm font-medium text-neutral-700">Kata Laluan</label>
+                         <div className="text-sm">
+                            <a href="#" className="font-medium text-primary-600 hover:text-primary-500">Lupa kata laluan?</a>
+                        </div>
+                    </div>
+                    <div className="mt-1">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autoComplete="current-password"
+                            required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="appearance-none block w-full px-3 py-3 border border-neutral-300 rounded-lg placeholder-neutral-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-shadow"
+                            placeholder="••••••••"
+                        />
+                    </div>
+                </div>
 
-            <Button type="submit" className="w-full justify-center py-2.5" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </Button>
-          </form>
+                <div className="flex items-center">
+                    <input
+                        id="remember-me"
+                        name="remember-me"
+                        type="checkbox"
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-neutral-300 rounded"
+                    />
+                    <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-900">
+                        Ingat saya
+                    </label>
+                </div>
 
-          <div className="mt-6">
+                <div>
+                    <Button type="submit" className="w-full justify-center py-3 text-base shadow-lg shadow-primary-500/20" disabled={isLoading}>
+                        {isLoading ? 'Sedang Log Masuk...' : 'Log Masuk'}
+                    </Button>
+                </div>
+            </form>
+
             <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-neutral-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-neutral-500">
-                  Or try the demo
-                </span>
-              </div>
+                <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-neutral-300"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-neutral-500">Atau akses demo</span>
+                </div>
             </div>
 
-            <div className="mt-6">
-              <button
+            <button
                 onClick={handleDemoLogin}
-                disabled={isLoading}
-                className="w-full flex justify-center items-center px-4 py-2.5 border border-primary shadow-sm text-sm font-medium rounded-md text-primary bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
-              >
-                <Icon name="user-circle" className="w-5 h-5 mr-2" />
-                Login to Demo Account
-              </button>
-              <p className="mt-2 text-xs text-center text-neutral-500">
-                Access as Admin/Manager to view all features.
-              </p>
-            </div>
-          </div>
-        </Card>
-        
-        <p className="mt-8 text-center text-xs text-neutral-500">
-          &copy; {new Date().getFullYear()} HR Core System. All rights reserved.
-        </p>
+                className="w-full flex justify-center items-center px-4 py-3 border border-neutral-300 shadow-sm text-sm font-medium rounded-lg text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all"
+            >
+                <Icon name="user-circle" className="w-5 h-5 mr-2 text-neutral-500" />
+                Log Masuk Akaun Demo
+            </button>
+        </div>
       </div>
     </div>
   );

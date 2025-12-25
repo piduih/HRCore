@@ -23,29 +23,33 @@ import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { HealthAndWellness } from './components/health/HealthAndWellness';
 import { Toast } from './components/common/Toast';
 import { LoginPage } from './components/auth/LoginPage';
+import { LandingPage } from './components/layout/LandingPage';
 
 export enum Page {
-  DASHBOARD = 'Dashboard',
-  DIRECTORY = 'Employee Directory',
-  RECRUITMENT = 'Recruitment',
-  ONBOARDING = 'Onboarding & Offboarding',
-  LEAVE = 'Leave Management',
-  CLAIMS = 'Claims Management',
-  ATTENDANCE = 'Attendance & Discipline',
-  ATTENDANCE_REPORT = 'Attendance Report',
-  PERFORMANCE = 'Performance',
-  TRAINING = 'Training',
-  ASSETS = 'Assets',
-  ENGAGEMENT = 'Engagement',
-  HEALTH_WELLNESS = 'Health & Wellness',
-  ANALYTICS = 'Analytics Dashboard',
-  PAYROLL = 'Financial Tools',
-  PAYROLL_PROCESSING = 'Payroll Processing',
+  DASHBOARD = 'Utama (Dashboard)',
+  DIRECTORY = 'Direktori Pekerja',
+  RECRUITMENT = 'Jawatan Kosong (Recruitment)',
+  ONBOARDING = 'Masuk & Keluar (Onboarding)',
+  LEAVE = 'Mohon Cuti (Leave)',
+  CLAIMS = 'Tuntutan (Claims)',
+  ATTENDANCE = 'Kehadiran (Attendance)',
+  ATTENDANCE_REPORT = 'Laporan Kehadiran',
+  PERFORMANCE = 'Prestasi (Performance)',
+  TRAINING = 'Latihan (Training)',
+  ASSETS = 'Aset Syarikat',
+  ENGAGEMENT = 'Suara Pekerja (Survey)',
+  HEALTH_WELLNESS = 'Kesihatan (Wellness)',
+  ANALYTICS = 'Analisa Data',
+  PAYROLL = 'Kalkulator Gaji',
+  PAYROLL_PROCESSING = 'Proses Gaji (Payroll)',
   RESOURCES = 'Pusat Sumber',
-  SETTINGS = 'Settings',
+  SETTINGS = 'Tetapan (Settings)',
 }
 
+type ViewState = 'landing' | 'login' | 'app';
+
 const App: React.FC = () => {
+  const [viewState, setViewState] = useState<ViewState>('landing');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentPage, setCurrentPage] = useState<Page>(Page.DASHBOARD);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -54,11 +58,11 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const handleOffline = () => {
-      setToast({ message: 'You are currently offline. Some features may be limited.', type: 'error' });
+      setToast({ message: 'Anda sedang offline. Beberapa fungsi mungkin terhad.', type: 'error' });
     };
 
     const handleOnline = () => {
-      setToast({ message: 'Connection restored. You are back online!', type: 'info' });
+      setToast({ message: 'Sambungan internet kembali pulih!', type: 'info' });
     };
 
     if (!navigator.onLine) {
@@ -125,19 +129,31 @@ const App: React.FC = () => {
     }
   }, [currentPage]);
 
+  const handleLogin = () => {
+    setIsAuthenticated(true);
+    setViewState('app');
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setSidebarOpen(false);
     setCurrentPage(Page.DASHBOARD);
+    setViewState('landing');
   };
 
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={() => setIsAuthenticated(true)} />;
+  // View Routing Logic
+  if (viewState === 'landing') {
+      return <LandingPage onLoginClick={() => setViewState('login')} />;
   }
 
+  if (viewState === 'login') {
+      return <LoginPage onLogin={handleLogin} onBack={() => setViewState('landing')} />;
+  }
+
+  // Authenticated App View
   return (
     <AppContextProvider>
-      <div className="flex h-screen bg-neutral-100 text-neutral-800">
+      <div className="flex h-screen bg-neutral-100 text-neutral-800 font-sans">
         <Sidebar 
           currentPage={currentPage} 
           setCurrentPage={setCurrentPage}
