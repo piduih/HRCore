@@ -1,7 +1,7 @@
 import React from 'react';
 
 // FIX: Export `IconName` type so it can be imported in other files.
-export type IconName = 'dashboard' | 'directory' | 'leave' | 'claims' | 'payroll' | 'user' | 'logout' | 'menu' | 'close' | 'send' | 'bot' | 'chevron-down' | 'plus' | 'check' | 'cross' | 'calendar' | 'money' | 'info' | 'paperclip' | 'book-open' | 'edit' | 'trash' | 'bullhorn' | 'money-bill' | 'clipboard-check' | 'qrcode' | 'star' | 'academic-cap' | 'cube' | 'briefcase' | 'user-circle' | 'users' | 'banknotes' | 'settings' | 'chart-bar' | 'heart' | 'wifi' | 'wifi-off';
+export type IconName = 'dashboard' | 'directory' | 'leave' | 'claims' | 'payroll' | 'user' | 'logout' | 'menu' | 'close' | 'send' | 'bot' | 'chevron-down' | 'plus' | 'check' | 'cross' | 'calendar' | 'money' | 'info' | 'paperclip' | 'book-open' | 'edit' | 'trash' | 'bullhorn' | 'money-bill' | 'clipboard-check' | 'qrcode' | 'star' | 'academic-cap' | 'cube' | 'briefcase' | 'user-circle' | 'users' | 'banknotes' | 'settings' | 'chart-bar' | 'heart' | 'wifi' | 'wifi-off' | 'arrow-left';
 
 interface IconProps extends React.SVGProps<SVGSVGElement> {
   name: IconName;
@@ -48,6 +48,7 @@ const icons: Record<IconName, React.ReactNode> = {
   heart: <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />,
   wifi: <path strokeLinecap="round" strokeLinejoin="round" d="M8.28 9.005a5.25 5.25 0 017.44 0M5.12 5.845a9 9 0 0113.76 0M2 2.685a12.75 12.75 0 0119.5 0M12 17.25a.75.75 0 100-1.5.75.75 0 000 1.5z" />,
   'wifi-off': <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 3.981a12.75 12.75 0 0116.04 0M12 17.25a.75.75 0 100-1.5.75.75 0 000 1.5zM6.16 6.84a9 9 0 0111.68 0M9.24 9.915a5.25 5.25 0 015.52 0M1.39 1.39l21.22 21.22" />,
+  'arrow-left': <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />,
 };
 
 export const Icon: React.FC<IconProps> = ({ name, className = 'w-6 h-6', ...props }) => {
